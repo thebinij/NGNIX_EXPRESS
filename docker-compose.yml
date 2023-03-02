@@ -3,14 +3,27 @@ version: '3.9'
 services:
   # NodeJS application
   api:
-    build: .
-
+    build: 
+      context: express-app
+    environment:
+      - PORT=3000
+    ports:
+      - 3000
+    networks:
+      - express_network
+ 
   # Reverse Proxy
   ngnix:
+    container_name: loadbalancer
     image: nginx:latest
     volumes:
-      - ./conf.d:/etc/nginx/conf.d
+      - ./config.d:/etc/nginx/conf.d
     depends_on:
       - api
     ports:
       - 3000:3000
+    networks:
+      - express_network
+  
+networks:
+  express_network:
